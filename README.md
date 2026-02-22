@@ -27,20 +27,26 @@ Output: {
   "time": "18:00",
   "constraints": null
 }
+
 Step 2: Geocode Tool 
 - Convert neighborhood to lat, lng
 - pass structured coordinates downstream
+
 Step 3: restaurant discovery tool
 - query google places API
 - return candidate restaurants in radius
+
 Step 4: popularity aggregation
 - for each restaurant, grab the google rating, review count, price tier, cuisine, and platform presence for booking
+
 Step 5: reservation likelihood heuristic
 - logic example - lower availability with large party, high popularity, and prime time
+
 Step 6: ranking
 - sorted by reservation likelihood
 - popularity
 - weighted composte score
+
 Step 7: Structured output
 - 3–5 ranked options
 - Popularity metrics
