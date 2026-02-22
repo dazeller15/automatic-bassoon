@@ -13,9 +13,9 @@
         176,
         0
       ],
-      "id": "b7d177ed-4023-435c-b2bf-4a5f84697632",
+      "id": "xx",
       "name": "When chat message received",
-      "webhookId": "dfc15403-cd92-466e-85a4-06a01f01feec"
+      "webhookId": "xxc"
     },
     {
       "parameters": {
@@ -31,7 +31,7 @@
         624,
         0
       ],
-      "id": "3444ee05-471f-4b8d-bbfc-9ea516443068",
+      "id": "xx",
       "name": "AI Agent"
     },
     {
@@ -45,7 +45,7 @@
         432,
         224
       ],
-      "id": "1ef7b193-4bfa-46da-8bcc-5954e27d4d78",
+      "id": "xx",
       "name": "Simple Memory"
     },
     {
