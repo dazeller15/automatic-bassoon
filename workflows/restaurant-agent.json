@@ -1,0 +1,306 @@
+{
+  "name": "Reservations",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "lastNode"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        176,
+        0
+      ],
+      "id": "b7d177ed-4023-435c-b2bf-4a5f84697632",
+      "name": "When chat message received",
+      "webhookId": "dfc15403-cd92-466e-85a4-06a01f01feec"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=={{$json.chatInput}}",
+        "options": {
+          "systemMessage": "<role>\nYou are the NYC Reservation Assistant— fast, decisive, and execution-focused.\nYour job is to help users discover great restaurants near a given location in NYC, based on different ratings across the web. \nYou do NOT check live availability.\n</role>\n\nYou have access to the following tools:\n- search_restaurants: Find restaurants near a NYC location by cuisine, neighborhood, or vibe\n- get_restaurant_details: Get ratings, reviews summary, price range, and highlights for a specific restaurant\n\nAlways return 3–5 restaurant recommendations. Include Google rating, Yelp rating (if available), price range, and 1-line vibe description. Be decisive — lead with your top pick."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "3444ee05-471f-4b8d-bbfc-9ea516443068",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{$json.sessionId}}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        224
+      ],
+      "id": "1ef7b193-4bfa-46da-8bcc-5954e27d4d78",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{$json.response}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        976,
+        0
+      ],
+      "id": "ab503dbf-c7c0-4201-b498-7f940440f9bd",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        288,
+        208
+      ],
+      "id": "6d1a5d14-e75e-4f2b-a69e-8766eed0fb5c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "XCblwWCWaCHdlkCw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7bc771e8-4e82-49ab-9132-96d681472c7f",
+              "name": "address",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        0
+      ],
+      "id": "874ad522-d3c7-47e7-b71b-c0a19868cfc7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search for restaurants in a NYC neighborhood. Use this when the user mentions a location, cuisine type, or asks for recommendations.",
+        "url": "https://maps.googleapis.com/maps/api/place/textsearch/json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "=={{ $fromAI(\"location\") + \" \" + $fromAI(\"cuisine\", \"restaurant\") + \" NYC\" }}"
+            },
+            {
+              "name": "key",
+              "value": "AIzaSyC6tSreDYkVGaDLje61pQFoyGXElmSUhfw"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        608,
+        256
+      ],
+      "id": "1a6cc926-faea-4c09-ae9b-c6837f5f779c",
+      "name": "search_restaurants"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Get detailed ratings, reviews, price range, and hours for a specific restaurant using its Google Place ID. Call this after search_restaurants to enrich results.",
+        "url": "https://maps.googleapis.com/maps/api/place/details/json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "AIzaSyC6tSreDYkVGaDLje61pQFoyGXElmSUhfw"
+            },
+            {
+              "name": "place_id",
+              "value": "=={{ $fromAI(\"place_id\") }}"
+            },
+            {
+              "name": "fields",
+              "value": "name,rating,user_ratings_total,price_level,reviews,formatted_address"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        784,
+        208
+      ],
+      "id": "7a0424a6-168b-461d-b8ad-82e295e322fd",
+      "name": "get_restaurant_details"
+    },
+    {
+      "parameters": {
+        "url": "https://www.opentable.com/s?term={{ $fromAI(\"restaurant_name\") }}&covers={{ $fromAI(\"party_size\", \"2\") }}&dateTime={{ $fromAI(\"date\") }}",
+        "additionalFields": {
+          "aiExtractRules": "=Extract the following from this OpenTable search results page:\n- Restaurant name\n- Available reservation time slots\n- Party size\n- Cuisine type\n- Price range\n- Neighborhood\n- Rating and review count\n\nReturn as a structured list for each restaurant found. If no availability is shown, say \"No availability found\".",
+          "blockAds": true,
+          "blockResources": true,
+          "premiumProxy": true,
+          "renderJs": true
+        }
+      },
+      "type": "n8n-nodes-scrapingbee.ScrapingBeeTool",
+      "typeVersion": 1,
+      "position": [
+        960,
+        176
+      ],
+      "id": "a6a4cc9a-f3e0-4344-92a7-a8d9e90a9714",
+      "name": "Scrape using HTML API in ScrapingBee",
+      "credentials": {
+        "ScrapingBeeApi": {
+          "id": "VX6QJ3X2vFredAoH",
+          "name": "ScrapingBee account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search_restaurants": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_restaurant_details": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape using HTML API in ScrapingBee": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7f4d674e-d449-4fc4-a169-ecb245885db4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fad76ae2c527333e948218b60c1d37c0e30f6610c068f8d153a4165bf14a75ec"
+  },
+  "id": "qfnpPiIB8jee7CQ9",
+  "tags": []
+}
