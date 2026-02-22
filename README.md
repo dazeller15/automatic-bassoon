@@ -1,4 +1,4 @@
-# automatic-bassoon
+# reservation agent
 Testing out an agent that helps you figure out where to eat a meal in NYC with a hybrid LLM + deterministic workflow agent 
 
 Problem: Choosing a restaurant for a group requires:
