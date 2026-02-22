@@ -1,2 +1,2 @@
 # automatic-bassoon
-Playing around with n8n
+Testing a few things
