@@ -60,7 +60,7 @@
         976,
         0
       ],
-      "id": "ab503dbf-c7c0-4201-b498-7f940440f9bd",
+      "id": "",
       "name": "Respond to Webhook"
     },
     {
@@ -79,7 +79,7 @@
         288,
         208
       ],
-      "id": "6d1a5d14-e75e-4f2b-a69e-8766eed0fb5c",
+      "id": ""
       "name": "OpenAI Chat Model",
       "credentials": {
       
@@ -91,7 +91,7 @@
         "assignments": {
           "assignments": [
             {
-              "id": "7bc771e8-4e82-49ab-9132-96d681472c7f",
+              "id": "f",
               "name": "address",
               "value": "={{ $json.chatInput }}",
               "type": "string"
@@ -107,7 +107,7 @@
         384,
         0
       ],
-      "id": "874ad522-d3c7-47e7-b71b-c0a19868cfc7",
+      "id": "",
       "name": "Edit Fields"
     },
     {
@@ -135,7 +135,7 @@
         608,
         256
       ],
-      "id": "1a6cc926-faea-4c09-ae9b-c6837f5f779c",
+      "id": "",
       "name": "search_restaurants"
     },
     {
@@ -191,8 +191,6 @@
       "name": "Scrape using HTML API in ScrapingBee",
       "credentials": {
         "ScrapingBeeApi": {
-          "id": "VX6QJ3X2vFredAoH",
-          "name": "ScrapingBee account"
         }
       }
     }
