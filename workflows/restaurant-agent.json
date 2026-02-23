@@ -82,9 +82,7 @@
       "id": "6d1a5d14-e75e-4f2b-a69e-8766eed0fb5c",
       "name": "OpenAI Chat Model",
       "credentials": {
-        "openAiApi": {
-          "id": "XCblwWCWaCHdlkCw",
-          "name": "OpenAi account"
+      
         }
       }
     },
@@ -115,7 +113,7 @@
     {
       "parameters": {
         "toolDescription": "Search for restaurants in a NYC neighborhood. Use this when the user mentions a location, cuisine type, or asks for recommendations.",
-        "url": "https://maps.googleapis.com/maps/api/place/textsearch/json",
+        "url": "",
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
